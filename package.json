@@ -35,7 +35,8 @@
   "dependencies": {
     "@ethersproject/bignumber": "^5.4.0",
     "@sushiswap/core-sdk": "1.0.0-canary.116",
-    "debug": "^4.3.4"
+    "debug": "^4.3.4",
+    "rxjs": "^7.5.5"
   },
   "devDependencies": {
     "@types/jest": "^27",
