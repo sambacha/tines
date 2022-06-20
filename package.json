@@ -1,0 +1,60 @@
+{
+  "name": "@sushiswap/tines",
+  "version": "1.0.0-canary.98",
+  "license": "MIT",
+  "main": "dist/index.js",
+  "typings": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "module": "dist/tines.esm.js",
+  "repository": {
+    "url": "sushiswap/sdk",
+    "directory": "packages/tines"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "scripts": {
+    "lint": "tsdx lint src test",
+    "build": "tsdx build",
+    "watch": "tsdx watch",
+    "test": "tsdx test",
+    "test_debug": "node --inspect-brk '../../node_modules/tsdx/dist/index.js' test",
+    "clear_jest_cache": "tsdx test --clearCache --passWithNoTests",
+    "prepublishOnly": "npx tsdx build",
+    "baseline": "npx tsc --extendedDiagnostics",
+    "explain": "npx tsc --explainFiles > explanation.txt",
+    "trace": "npx tsc --traceResolution > resolution.txt",
+    "profile": "node --trace-ic ./node_modules/typescript/lib/tsc.js --generateCpuProfile profile.cpuprofile -p tsconfig.json",
+    "tracer": "mkdir -p tmp_folder/ && npx tsc -p ./tsconfig.json --generateTrace tmp_folder",
+    "compile": "npx rollup -c rollup.config.js",
+    "fmt": "npx prettier --config .prettierrc.js --write src/**/*.ts"
+  },
+  "dependencies": {
+    "@ethersproject/bignumber": "^5.4.0",
+    "@sushiswap/core-sdk": "1.0.0-canary.116",
+    "debug": "^4.3.4"
+  },
+  "devDependencies": {
+    "@types/jest": "^27",
+    "@types/node": "^16.11.41",
+    "@types/seedrandom": "^3.0.1",
+    "@typescript-eslint/eslint-plugin": "^5.27.1",
+    "@typescript-eslint/parser": "^5.27.1",
+    "@typescript/analyze-trace": "^0.9.0",
+    "eslint": "^8.17.0",
+    "jest": "^27",
+    "prettier": "^2.7.1",
+    "process-tracing": "^1.0.2",
+    "seedrandom": "^3.0.5",
+    "ts-jest": "^27",
+    "ts-node": "^10.7.0",
+    "tsdx": "^0.14.1",
+    "tslib": "^2.4.0",
+    "typescript": "4.7.4",
+    "typescript-eslint-language-service": "^5.0.0"
+  },
+  "gitHead": "b869e78b9f7fa4a073f599f557a141f894287766"
+}
