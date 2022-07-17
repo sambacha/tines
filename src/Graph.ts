@@ -1104,7 +1104,6 @@ export class Graph {
         minOutput = out
       }
     })
-    // @ts-expect-error
     minVert.getOutputEdges().forEach((e) => {
       if (minVert.getNeibour(e) !== minVertNext) return
       e.canBeUsed = false

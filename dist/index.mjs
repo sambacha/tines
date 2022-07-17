@@ -1,17 +1,13 @@
-'use strict';
-
-Object.defineProperty(exports, '__esModule', { value: true });
-
-var bignumber = require('@ethersproject/bignumber');
-var rxjs = require('rxjs');
+import { BigNumber } from '@ethersproject/bignumber';
+import { Observable } from 'rxjs';
 
 let APPLIED = false;
 const applyPatches = () => {
   if (APPLIED) {
     return;
   }
-  const sub = rxjs.Observable.prototype.subscribe;
-  rxjs.Observable.prototype.subscribe = function(...args) {
+  const sub = Observable.prototype.subscribe;
+  Observable.prototype.subscribe = function(...args) {
     const sink = sub.call(this, ...args);
     const unsub = sink.unsubscribe;
     sink.unsubscribe = (...unsubArcs) => {
@@ -95,12 +91,12 @@ function revertPositive(f, out, hint = 1) {
 function getBigNumber(value) {
   const v = Math.abs(value);
   if (v < Number.MAX_SAFE_INTEGER)
-    return bignumber.BigNumber.from(Math.round(value));
+    return BigNumber.from(Math.round(value));
   const exp = Math.floor(Math.log(v) / Math.LN2);
   console.assert(exp >= 51, "Internal Error 314");
   const shift = exp - 51;
   const mant = Math.round(v / 2 ** shift);
-  const res = bignumber.BigNumber.from(mant).mul(bignumber.BigNumber.from(2).pow(shift));
+  const res = BigNumber.from(mant).mul(BigNumber.from(2).pow(shift));
   return value > 0 ? res : res.mul(-1);
 }
 
@@ -184,10 +180,10 @@ class HybridRPool extends RPool {
   constructor(address, token0, token1, fee, A, reserve0, reserve1) {
     super(address, token0, token1, fee, reserve0, reserve1);
     this.A = A;
-    this.D = bignumber.BigNumber.from(0);
+    this.D = BigNumber.from(0);
   }
   updateReserves(res0, res1) {
-    this.D = bignumber.BigNumber.from(0);
+    this.D = BigNumber.from(0);
     this.reserve0 = res0;
     this.reserve1 = res1;
   }
@@ -197,9 +193,9 @@ class HybridRPool extends RPool {
     const r0 = this.reserve0;
     const r1 = this.reserve1;
     if (r0.isZero() && r1.isZero())
-      return bignumber.BigNumber.from(0);
+      return BigNumber.from(0);
     const s = r0.add(r1);
-    const nA = bignumber.BigNumber.from(this.A * 2);
+    const nA = BigNumber.from(this.A * 2);
     let prevD;
     let D = s;
     for (let i = 0; i < 256; i++) {
@@ -242,7 +238,7 @@ class HybridRPool extends RPool {
     const yBN = direction ? this.reserve1 : this.reserve0;
     let yNewBN = yBN.sub(getBigNumber(amountOut));
     if (yNewBN.lt(1))
-      yNewBN = bignumber.BigNumber.from(1);
+      yNewBN = BigNumber.from(1);
     const xNewBN = this.computeY(yNewBN);
     let input = Math.round(parseInt(xNewBN.sub(xBN).toString()) / (1 - this.fee));
     return { inp: input, gasSpent: this.swapGasCost };
@@ -423,12 +419,12 @@ class StableSwapRPool extends RPool {
   total1;
   constructor(address, token0, token1, fee, reserve0, reserve1, total0, total1) {
     super(address, token0, token1, fee, toAmountBN(reserve0, total0), toAmountBN(reserve1, total1));
-    this.k = bignumber.BigNumber.from(0);
+    this.k = BigNumber.from(0);
     this.total0 = new RebaseInternal(total0);
     this.total1 = new RebaseInternal(total1);
   }
   updateReserves(res0, res1) {
-    this.k = bignumber.BigNumber.from(0);
+    this.k = BigNumber.from(0);
     this.reserve0 = this.total0.toAmountBN(res0);
     this.reserve1 = this.total1.toAmountBN(res1);
   }
@@ -1116,13 +1112,13 @@ class Graph {
         fromToken: from,
         toToken: to,
         amountIn: 0,
-        amountInBN: bignumber.BigNumber.from(0),
+        amountInBN: BigNumber.from(0),
         amountOut: 0,
-        amountOutBN: bignumber.BigNumber.from(0),
+        amountOutBN: BigNumber.from(0),
         legs: [],
         gasSpent: 0,
         totalAmountOut: 0,
-        totalAmountOutBN: bignumber.BigNumber.from(0)
+        totalAmountOutBN: BigNumber.from(0)
       };
     let status;
     if (step < routeValues.length)
@@ -1198,13 +1194,13 @@ class Graph {
         fromToken: from,
         toToken: to,
         amountIn: 0,
-        amountInBN: bignumber.BigNumber.from(0),
+        amountInBN: BigNumber.from(0),
         amountOut: 0,
-        amountOutBN: bignumber.BigNumber.from(0),
+        amountOutBN: BigNumber.from(0),
         legs: [],
         gasSpent: 0,
         totalAmountOut: 0,
-        totalAmountOutBN: bignumber.BigNumber.from(0)
+        totalAmountOutBN: BigNumber.from(0)
       };
     let status;
     if (step < routeValues.length)
@@ -1482,7 +1478,7 @@ function getBetterRouteExactIn(route1, route2) {
   return route1.totalAmountOut > route2.totalAmountOut ? route1 : route2;
 }
 function findMultiRouteExactIn(from, to, amountIn, pools, baseToken, gasPrice, flows) {
-  if (amountIn instanceof bignumber.BigNumber) {
+  if (amountIn instanceof BigNumber) {
     amountIn = parseInt(amountIn.toString());
   }
   const g = new Graph(pools, baseToken, gasPrice);
@@ -1514,7 +1510,7 @@ function getBetterRouteExactOut(route1, route2, gasPrice) {
   return totalAmountIn1 < totalAmountIn2 ? route1 : route2;
 }
 function findMultiRouteExactOut(from, to, amountOut, pools, baseToken, gasPrice, flows) {
-  if (amountOut instanceof bignumber.BigNumber) {
+  if (amountOut instanceof BigNumber) {
     amountOut = parseInt(amountOut.toString());
   }
   const g = new Graph(pools, baseToken, gasPrice);
@@ -1538,7 +1534,7 @@ function findSingleRouteExactIn(from, to, amountIn, pools, baseToken, gasPrice) 
   if (fromV?.price === 0) {
     g.setPricesStable(fromV, 1, 0);
   }
-  if (amountIn instanceof bignumber.BigNumber) {
+  if (amountIn instanceof BigNumber) {
     amountIn = parseInt(amountIn.toString());
   }
   const out = g.findBestRouteExactIn(from, to, amountIn, 1);
@@ -1550,7 +1546,7 @@ function findSingleRouteExactOut(from, to, amountOut, pools, baseToken, gasPrice
   if (fromV?.price === 0) {
     g.setPricesStable(fromV, 1, 0);
   }
-  if (amountOut instanceof bignumber.BigNumber) {
+  if (amountOut instanceof BigNumber) {
     amountOut = parseInt(amountOut.toString());
   }
   const out = g.findBestRouteExactOut(from, to, amountOut, 1);
@@ -1635,8 +1631,8 @@ class RConcentratedLiquidityPool extends Pool {
   constructor(info) {
     super({
       type: "ConcentratedLiquidity" /* ConcentratedLiquidity */,
-      reserve0: bignumber.BigNumber.from(0),
-      reserve1: bignumber.BigNumber.from(0),
+      reserve0: BigNumber.from(0),
+      reserve1: BigNumber.from(0),
       ...info
     });
     this.liquidity = info.liquidity;
@@ -1655,11 +1651,11 @@ function HybridComputeLiquidity(pool) {
   const r0 = pool.reserve0;
   const r1 = pool.reserve1;
   if (r0.isZero() && r1.isZero()) {
-    DCacheBN.set(pool, bignumber.BigNumber.from(0));
-    return bignumber.BigNumber.from(0);
+    DCacheBN.set(pool, BigNumber.from(0));
+    return BigNumber.from(0);
   }
   const s = r0.add(r1);
-  const nA = bignumber.BigNumber.from(pool.A * 2);
+  const nA = BigNumber.from(pool.A * 2);
   let prevD;
   let D = s;
   for (let i = 0; i < 256; i++) {
@@ -1740,7 +1736,7 @@ function calcInByOut(pool, amountOut, direction) {
     case PoolType.Hybrid: {
       let yNewBN = yBN.sub(getBigNumber(amountOut));
       if (yNewBN.lt(1))
-        yNewBN = bignumber.BigNumber.from(1);
+        yNewBN = BigNumber.from(1);
       const xNewBN = HybridgetY(pool, yNewBN);
       input = Math.round(parseInt(xNewBN.sub(xBN).toString()) / (1 - pool.fee));
       break;
@@ -1808,45 +1804,5 @@ function calcInputByPrice(pool, priceEffective, hint = 1) {
   return 0;
 }
 
-exports.ASSERT = ASSERT;
-exports.CLRPool = CLRPool;
-exports.CL_MAX_TICK = CL_MAX_TICK;
-exports.CL_MIN_TICK = CL_MIN_TICK;
-exports.ConstantProductRPool = ConstantProductRPool;
-exports.DEBUG = DEBUG;
-exports.DEBUG_MODE_ON = DEBUG_MODE_ON;
-exports.Edge = Edge;
-exports.Graph = Graph;
-exports.HybridComputeLiquidity = HybridComputeLiquidity;
-exports.HybridRPool = HybridRPool;
-exports.HybridgetY = HybridgetY;
-exports.OutOfLiquidity = OutOfLiquidity;
-exports.Pool = Pool;
-exports.PoolType = PoolType;
-exports.RConcentratedLiquidityPool = RConcentratedLiquidityPool;
-exports.RConstantProductPool = RConstantProductPool;
-exports.RHybridPool = RHybridPool;
-exports.RPool = RPool;
-exports.RWeightedPool = RWeightedPool;
-exports.RouteStatus = RouteStatus;
-exports.StableSwapRPool = StableSwapRPool;
-exports.TYPICAL_MINIMAL_LIQUIDITY = TYPICAL_MINIMAL_LIQUIDITY;
-exports.TYPICAL_SWAP_GAS_COST = TYPICAL_SWAP_GAS_COST;
-exports.Vertice = Vertice;
-exports._disableDTraceMode = _disableDTraceMode;
-exports.calcInByOut = calcInByOut;
-exports.calcInputByPrice = calcInputByPrice;
-exports.calcOutByIn = calcOutByIn;
-exports.calcPrice = calcPrice;
-exports.calcSquareEquation = calcSquareEquation;
-exports.calcTokenPrices = calcTokenPrices;
-exports.closeValues = closeValues;
-exports.enableTraceMode = enableTraceMode;
-exports.findMultiRouteExactIn = findMultiRouteExactIn;
-exports.findMultiRouteExactOut = findMultiRouteExactOut;
-exports.findSingleRouteExactIn = findSingleRouteExactIn;
-exports.findSingleRouteExactOut = findSingleRouteExactOut;
-exports.getBigNumber = getBigNumber;
-exports.isTraceMode = isTraceMode;
-exports.revertPositive = revertPositive;
-//# sourceMappingURL=index.js.map
+export { ASSERT, CLRPool, CL_MAX_TICK, CL_MIN_TICK, ConstantProductRPool, DEBUG, DEBUG_MODE_ON, Edge, Graph, HybridComputeLiquidity, HybridRPool, HybridgetY, OutOfLiquidity, Pool, PoolType, RConcentratedLiquidityPool, RConstantProductPool, RHybridPool, RPool, RWeightedPool, RouteStatus, StableSwapRPool, TYPICAL_MINIMAL_LIQUIDITY, TYPICAL_SWAP_GAS_COST, Vertice, _disableDTraceMode, calcInByOut, calcInputByPrice, calcOutByIn, calcPrice, calcSquareEquation, calcTokenPrices, closeValues, enableTraceMode, findMultiRouteExactIn, findMultiRouteExactOut, findSingleRouteExactIn, findSingleRouteExactOut, getBigNumber, isTraceMode, revertPositive };
+//# sourceMappingURL=index.mjs.map

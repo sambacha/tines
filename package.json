@@ -2,12 +2,29 @@
   "name": "@sushiswap/tines",
   "version": "1.0.0-canary.98",
   "license": "MIT",
+  "sideEffects": false,
   "main": "dist/index.js",
-  "typings": "dist/index.d.ts",
+  "module": "dist/tines.esm.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "require": "./dist/index.js",
+      "main": "./dist/index.js",
+      "module": "./dist/index.js",
+      "import": "./dist/index.js"
+    },
+    "./*": {
+      "types": "./dist/*.d.ts",
+      "require": "./dist/*.js",
+      "main": "./dist/*.js",
+      "module": "./dist/*.js",
+      "import": "./dist/*.js"
+    }
+  },
   "files": [
     "dist"
   ],
-  "module": "dist/tines.esm.js",
   "repository": {
     "url": "sushiswap/sdk",
     "directory": "packages/tines"
@@ -33,7 +50,7 @@
     "fmt": "npx prettier --config .prettierrc.js --write src/**/*.ts"
   },
   "dependencies": {
-    "@ethersproject/bignumber": "^5.4.0",
+    "@ethersproject/bignumber": "^5.6.2",
     "@sushiswap/core-sdk": "1.0.0-canary.116",
     "debug": "^4.3.4",
     "rxjs": "^7.5.5"
@@ -45,17 +62,22 @@
     "@typescript-eslint/eslint-plugin": "^5.27.1",
     "@typescript-eslint/parser": "^5.27.1",
     "@typescript/analyze-trace": "^0.9.0",
+    "downlevel-dts": "^0.10.0",
+    "esbuild": "^0.14.49",
     "eslint": "^8.17.0",
     "jest": "^27",
     "prettier": "^2.7.1",
     "process-tracing": "^1.0.2",
+    "rollup": "^2.77.0",
+    "rollup-plugin-dts": "^4.2.2",
+    "rollup-plugin-esbuild": "^4.9.1",
     "seedrandom": "^3.0.5",
     "ts-jest": "^27",
     "ts-node": "^10.7.0",
     "tsdx": "^0.14.1",
     "tslib": "^2.4.0",
-    "typescript": "4.7.4",
+    "typedoc": "^0.23.7",
+    "typescript": "4.6.3",
     "typescript-eslint-language-service": "^5.0.0"
-  },
-  "gitHead": "b869e78b9f7fa4a073f599f557a141f894287766"
+  }
 }
