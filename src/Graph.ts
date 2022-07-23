@@ -1,6 +1,6 @@
 import { BigNumber } from "@ethersproject/bignumber";
 import { RPool } from "./PrimaryPools";
-import {ASSERT, getBigNumber, closeValues, DEBUG, enableTraceMode } from "./Utils";
+import {ASSERT, getBigNumber, closeValues, DEBUG, enableTraceMode, invariant } from "./Utils";
 
 import type { RToken } from "./PrimaryPools";
 

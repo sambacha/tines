@@ -7,6 +7,18 @@ export function ASSERT(f: () => boolean, t?: string) {
     if (process.env.NODE_ENV !== 'production' && (!f() && t)) console.error(t);
   }
 
+  // && (!f() && t)) console.error(t);
+  const isProduction: boolean = process.env.NODE_ENV === 'production'
+  const prefix: string = 'Invariant failed' + (isProduction ? '' : ': ')
+  
+  export function invariant(condition: boolean, message?: string) {
+    if (condition) {
+      return
+    }
+  
+    throw new Error(isProduction ? prefix : `${prefix}: ${message || ''}`)
+  }
+
 let DEBUG_MODE = false
 export function DEBUG(f: () => any) {
   if (DEBUG_MODE) f()
@@ -102,6 +114,10 @@ export function revertPositive(
     if (v < Number.MAX_SAFE_INTEGER) return BigNumber.from(Math.round(value));
   
     const exp = Math.floor(Math.log(v) / Math.LN2);
+    // const mantissa = v * Math.pow(2, -exp);
+    // return BigNumber.from(mantissa).mul(BigNumber.from(2).pow(exp));
+   //  return BigNumber.from(v).mul(BigNumber.from(2).pow(exp));
+   // @Error 314
     console.assert(exp >= 51, "Internal Error 314");
     const shift = exp - 51;
     // exponentiation operator **; accepts BigInts as operands.

@@ -19,10 +19,8 @@ class RebaseInternal {
 
   constructor(rebase: Rebase) {
     this.rebaseBN = rebase
-    if (rebase.base.isZero() || rebase.elastic.isZero())
-      this.elastic2Base = 1
-    else
-      this.elastic2Base = parseInt(rebase.elastic.toString())/parseInt(rebase.base.toString())
+    // prettier-ignore
+    this.elastic2Base = rebase.base.isZero() || rebase.elastic.isZero() ? 1 : parseInt(rebase.elastic.toString())/parseInt(rebase.base.toString());
   }
 
   toAmount(share: number) {
