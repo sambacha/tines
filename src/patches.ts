@@ -2,7 +2,7 @@ import { Observable } from 'rxjs';
 //const debug = require("debug")("tines")
 
 export let patches = {
-  subscriptions: 0
+  subscriptions: 0,
 };
 
 let APPLIED = false;
@@ -15,7 +15,7 @@ export const applyPatches = () => {
   const sub = Observable.prototype.subscribe;
 
   // Monkeypatch Observable.subscribe globally so we can track how many exist
-  Observable.prototype.subscribe = function(...args) {
+  Observable.prototype.subscribe = function (...args) {
     patches.subscriptions++;
     const sink = sub.call(this, ...args);
     const unsub = sink.unsubscribe;
@@ -26,5 +26,5 @@ export const applyPatches = () => {
     };
     return sink;
   };
-  APPLIED = true ;
+  APPLIED = true;
 };
