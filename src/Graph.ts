@@ -10,17 +10,17 @@ import type { RToken } from './PrimaryPools';
  * @summary Routing info about each one swap
  */
 export interface RouteLeg {
-  poolAddress: string; // which pool use for swap
-  poolFee: number;
+  readonly poolAddress: string; // which pool use for swap
+  readonly poolFee: number;
 
-  tokenFrom: RToken; // from what token to swap
-  tokenTo: RToken; // to what token
+  readonly tokenFrom: RToken; // from what token to swap
+  readonly tokenTo: RToken; // to what token
 
-  assumedAmountIn: number; // assumed number of input token for swapping
-  assumedAmountOut: number; // assumed number of output token after swapping
+  readonly assumedAmountIn: number; // assumed number of input token for swapping
+  readonly assumedAmountOut: number; // assumed number of output token after swapping
 
-  swapPortion: number; // for router contract
-  absolutePortion: number; // to depict at webpage for user
+  readonly swapPortion: number; // for router contract
+  readonly absolutePortion: number; // to depict at webpage for user
 }
 
 export enum RouteStatus {
@@ -34,20 +34,20 @@ export enum RouteStatus {
  * @interface MultiRoute
  */
 export interface MultiRoute {
-  status: RouteStatus;
-  fromToken: RToken;
-  toToken: RToken;
-  primaryPrice?: number;
-  swapPrice?: number;
-  priceImpact?: number;
-  amountIn: number;
-  amountInBN: BigNumber;
-  amountOut: number;
-  amountOutBN: BigNumber;
-  legs: RouteLeg[];
-  gasSpent: number;
-  totalAmountOut: number;
-  totalAmountOutBN: BigNumber;
+  readonly status: RouteStatus;
+  readonly fromToken: RToken;
+  readonly toToken: RToken;
+  readonly primaryPrice?: number;
+  readonly swapPrice?: number;
+  readonly priceImpact?: number;
+  readonly amountIn: number;
+  readonly amountInBN: BigNumber;
+  readonly amountOut: number;
+  readonly amountOutBN: BigNumber;
+  readonly legs: readonly RouteLeg[];
+  readonly gasSpent: number;
+  readonly totalAmountOut: number;
+  readonly totalAmountOutBN: BigNumber;
 }
 
 /**
@@ -57,17 +57,17 @@ export interface MultiRoute {
  * @class Edge
  */
 export class Edge {
-  pool: RPool;
-  vert0: Vertice;
-  vert1: Vertice;
+  readonly pool: RPool;
+  readonly vert0: Vertice;
+  readonly vert1: Vertice;
 
-  canBeUsed: boolean;
-  direction: boolean;
-  amountInPrevious: number; // How many liquidity were passed from vert0 to vert1
-  amountOutPrevious: number; // How many liquidity were passed from vert0 to vert1
-  spentGas: number; // How much gas was spent for this edge
-  spentGasNew: number; //  How much gas was will be spent for this edge
-  bestEdgeIncome: number; // debug data
+  readonly canBeUsed: boolean;
+  readonly direction: boolean;
+  readonly amountInPrevious: number; // How many liquidity were passed from vert0 to vert1
+  readonly amountOutPrevious: number; // How many liquidity were passed from vert0 to vert1
+  readonly spentGas: number; // How much gas was spent for this edge
+  readonly spentGasNew: number; //  How much gas was will be spent for this edge
+  readonly bestEdgeIncome: number; // debug data
 
   constructor(p: RPool, v0: Vertice, v1: Vertice) {
     this.pool = p;
@@ -96,7 +96,7 @@ export class Edge {
     return v === this.vert0 ? this.pool.reserve0 : this.pool.reserve1;
   }
 
-  calcOutput(v: Vertice, amountIn: number): { out: number; gasSpent: number } {
+  calcOutput(v: Vertice, amountIn: number): { readonly out: number; readonly gasSpent: number } {
     let res: number;
     let gas: number;
     if (v === this.vert1) {
@@ -138,7 +138,7 @@ export class Edge {
     return { out: res, gasSpent: gas - this.spentGas };
   }
 
-  calcInput(v: Vertice, amountOut: number): { inp: number; gasSpent: number } {
+  calcInput(v: Vertice, amountOut: number): { readonly inp: number; readonly gasSpent: number } {
     let res, gas;
     if (v === this.vert1) {
       if (!this.direction) {
@@ -280,17 +280,17 @@ export class Edge {
 }
 
 export class Vertice {
-  token: RToken;
-  edges: Edge[];
+  readonly token: RToken;
+  readonly edges: readonly Edge[];
 
-  price: number;
-  gasPrice: number;
+  readonly price: number;
+  readonly gasPrice: number;
 
-  bestIncome: number; // temp data used for findBestPath algorithm
-  gasSpent: number; // temp data used for findBestPath algorithm
-  bestTotal: number; // temp data used for findBestPath algorithm
-  bestSource?: Edge; // temp data used for findBestPath algorithm
-  checkLine: number; // debug data
+  readonly bestIncome: number; // temp data used for findBestPath algorithm
+  readonly gasSpent: number; // temp data used for findBestPath algorithm
+  readonly bestTotal: number; // temp data used for findBestPath algorithm
+  readonly bestSource?: Edge; // temp data used for findBestPath algorithm
+  readonly checkLine: number; // debug data
 
   constructor(t: RToken) {
     this.token = t;
@@ -317,7 +317,7 @@ export class Vertice {
     return e.vert0 === this ? e.vert1 : e.vert0;
   }
 
-  getOutputEdges(): Edge[] {
+  getOutputEdges(): readonly Edge[] {
     return this.edges.filter((e) => {
       if (!e.canBeUsed) return false;
       if (e.amountInPrevious === 0) return false;
@@ -326,7 +326,7 @@ export class Vertice {
     });
   }
 
-  getInputEdges(): Edge[] {
+  getInputEdges(): readonly Edge[] {
     return this.edges.filter((e) => {
       if (!e.canBeUsed) return false;
       if (e.amountInPrevious === 0) return false;
@@ -337,11 +337,11 @@ export class Vertice {
 }
 
 export class Graph {
-  vertices: Vertice[];
-  edges: Edge[];
-  tokens: Map<string, Vertice>;
+  readonly vertices: readonly Vertice[];
+  readonly edges: readonly Edge[];
+  readonly tokens: ReadonlyMap<string, Vertice>;
 
-  constructor(pools: RPool[], baseToken: RToken, gasPrice: number) {
+  constructor(pools: readonly RPool[], baseToken: RToken, gasPrice: number) {
     this.vertices = [];
     this.edges = [];
     this.tokens = new Map();
@@ -377,7 +377,7 @@ export class Graph {
       const newEdges = v.edges.filter((e) => v.getNeibour(e)?.price == 0);
       newEdges.forEach((e) => edgeValues.set(e, v.price * parseInt(e.reserve(v).toString())));
       newEdges.sort((e1, e2) => value(e1) - value(e2));
-      const res: Edge[] = [];
+      const res: readonly Edge[] = [];
       while (nextEdges.length && newEdges.length) {
         if (value(nextEdges[0]) < value(newEdges[0])) res.push(nextEdges.shift() as Edge);
         else res.push(newEdges.shift() as Edge);
@@ -385,7 +385,7 @@ export class Graph {
       nextEdges = [...res, ...nextEdges, ...newEdges];
     }
 
-    let nextEdges: Edge[] = [];
+    let nextEdges: readonly Edge[] = [];
     addVertice(from);
     while (nextEdges.length > 0) {
       const bestEdge = nextEdges.pop() as Edge;
@@ -394,7 +394,7 @@ export class Graph {
           ? [bestEdge.vert1, bestEdge.vert0]
           : [bestEdge.vert0, bestEdge.vert1];
       if (vTo.price !== 0) continue;
-      let p = bestEdge.pool.calcCurrentPriceWithoutFee(vFrom === bestEdge.vert1);
+      const p = bestEdge.pool.calcCurrentPriceWithoutFee(vFrom === bestEdge.vert1);
       vTo.price = vFrom.price * p;
       vTo.gasPrice = vFrom.gasPrice / p;
       addVertice(vTo);
@@ -407,7 +407,7 @@ export class Graph {
     from.price = price;
     from.gasPrice = gasPrice;
     const edges = from.edges
-      .map((e): [Edge, number] => [e, parseInt(e.reserve(from).toString())])
+      .map((e): readonly [Edge, number] => [e, parseInt(e.reserve(from).toString())])
       .sort(([_1, r1], [_2, r2]) => r2 - r1);
     edges.forEach(([e, _]) => {
       const v = e.vert0 === from ? e.vert1 : e.vert0;
@@ -505,10 +505,10 @@ export class Graph {
     _gasPrice?: number,
   ):
     | {
-        path: Edge[];
-        output: number;
-        gasSpent: number;
-        totalOutput: number;
+        readonly path: readonly Edge[];
+        readonly output: number;
+        readonly gasSpent: number;
+        readonly totalOutput: number;
       }
     | undefined {
     const start = this.tokens.get(from.address);
@@ -621,10 +621,10 @@ export class Graph {
     _gasPrice?: number,
   ):
     | {
-        path: Edge[];
-        input: number;
-        gasSpent: number;
-        totalInput: number;
+        readonly path: readonly Edge[];
+        readonly input: number;
+        readonly gasSpent: number;
+        readonly totalInput: number;
       }
     | undefined {
     const start = this.tokens.get(to.address);
@@ -726,7 +726,7 @@ export class Graph {
     }
   }
 
-  addPath(from: Vertice | undefined, to: Vertice | undefined, path: Edge[]) {
+  addPath(from: Vertice | undefined, to: Vertice | undefined, path: readonly Edge[]) {
     let _from = from;
     path.forEach((e) => {
       if (_from) {
@@ -766,7 +766,7 @@ export class Graph {
     }, 'Error 290');
   }
 
-  getPrimaryPriceForPath(from: Vertice, path: Edge[]): number {
+  getPrimaryPriceForPath(from: Vertice, path: readonly Edge[]): number {
     let p = 1;
     let prevToken = from;
     path.forEach((edge) => {
@@ -782,7 +782,7 @@ export class Graph {
     from: RToken,
     to: RToken,
     amountIn: number,
-    mode: number | number[],
+    mode: number | readonly number[],
   ): MultiRoute {
     let routeValues = [0];
     if (Array.isArray(mode)) {
@@ -878,7 +878,7 @@ export class Graph {
     from: RToken,
     to: RToken,
     amountOut: number,
-    mode: number | number[],
+    mode: number | readonly number[],
   ): MultiRoute {
     let routeValues = Array<number>();
     if (Array.isArray(mode)) {
@@ -974,12 +974,12 @@ export class Graph {
     from: Vertice,
     to: Vertice,
   ): {
-    legs: RouteLeg[];
-    gasSpent: number;
-    topologyWasChanged: boolean;
+    readonly legs: readonly RouteLeg[];
+    readonly gasSpent: number;
+    readonly topologyWasChanged: boolean;
   } {
     const { vertices, topologyWasChanged } = this.cleanTopology(from, to);
-    const legs: RouteLeg[] = [];
+    const legs: readonly RouteLeg[] = [];
     let gasSpent = 0;
     vertices.forEach((n) => {
       const outEdges = n.getOutputEdges().map((e) => {
@@ -1013,7 +1013,7 @@ export class Graph {
     return { legs, gasSpent, topologyWasChanged };
   }
 
-  edgeFrom(e: Edge): { vert: Vertice; amount: number } | undefined {
+  edgeFrom(e: Edge): { readonly vert: Vertice; readonly amount: number } | undefined {
     if (e.amountInPrevious === 0) return undefined;
     return e.direction
       ? { vert: e.vert0, amount: e.amountInPrevious }
@@ -1021,7 +1021,7 @@ export class Graph {
   }
 
   // TODO: make full test coverage!
-  calcLegsAmountOut(legs: RouteLeg[], amountIn: number) {
+  calcLegsAmountOut(legs: readonly RouteLeg[], amountIn: number) {
     const amounts = new Map<string, number>();
     amounts.set(legs[0].tokenFrom.address, amountIn);
     legs.forEach((l) => {
@@ -1046,7 +1046,7 @@ export class Graph {
   }
 
   // TODO: make full test coverage!
-  calcLegsAmountIn(legs: RouteLeg[], amountOut: number) {
+  calcLegsAmountIn(legs: readonly RouteLeg[], amountOut: number) {
     const totalOutputAssumed = new Map<string, number>();
     legs.forEach((l) => {
       const prevValue = totalOutputAssumed.get(l.tokenFrom.address) || 0;
@@ -1080,7 +1080,7 @@ export class Graph {
 
   // removes all cycles if there are any, then removes all dead end could appear after cycle removing
   // Returns clean result topologically sorted
-  cleanTopology(from: Vertice, to: Vertice): { vertices: Vertice[]; topologyWasChanged: boolean } {
+  cleanTopology(from: Vertice, to: Vertice): { readonly vertices: readonly Vertice[]; readonly topologyWasChanged: boolean } {
     let topologyWasChanged = false;
     let result = this.topologySort(from, to);
     if (result.status !== 2) {
@@ -1100,7 +1100,7 @@ export class Graph {
     return { vertices: result.vertices, topologyWasChanged };
   }
 
-  removeDeadEnds(verts: Vertice[]) {
+  removeDeadEnds(verts: readonly Vertice[]) {
     verts.forEach((v) => {
       v.getInputEdges().forEach((e) => {
         e.canBeUsed = false;
@@ -1108,7 +1108,7 @@ export class Graph {
     });
   }
 
-  removeWeakestEdge(verts: Vertice[]) {
+  removeWeakestEdge(verts: readonly Vertice[]) {
     let minVert: Vertice;
     let minVertNext: Vertice;
     let minOutput = Number.MAX_VALUE;
@@ -1136,12 +1136,12 @@ export class Graph {
   // if there is a cycle - returns [0, <List of envolved vertices in the cycle>]
   // if there are no cycles but deadends- returns [3, <List of all envolved deadend vertices>]
   // if there are no cycles or deadends- returns [2, <List of all envolved vertices topologically sorted>]
-  topologySort(from: Vertice, to: Vertice): { status: number; vertices: Vertice[] } {
+  topologySort(from: Vertice, to: Vertice): { readonly status: number; readonly vertices: readonly Vertice[] } {
     // undefined or 0 - not processed, 1 - in process, 2 - finished, 3 - dedend
     const vertState = new Map<Vertice, number>();
-    const vertsFinished: Vertice[] = [];
-    const foundCycle: Vertice[] = [];
-    const foundDeadEndVerts: Vertice[] = [];
+    const vertsFinished: readonly Vertice[] = [];
+    const foundCycle: readonly Vertice[] = [];
+    const foundDeadEndVerts: readonly Vertice[] = [];
 
     // 0 - cycle was found and created, return
     // 1 - during cycle creating

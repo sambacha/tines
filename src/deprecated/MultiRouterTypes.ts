@@ -1,8 +1,8 @@
 import { BigNumber } from '@ethersproject/bignumber';
 
 interface RToken {
-  name: string;
-  address: string;
+  readonly name: string;
+  readonly address: string;
 }
 
 export enum PoolType {
@@ -13,15 +13,15 @@ export enum PoolType {
 }
 
 export interface PoolInfo {
-  address: string;
-  token0: RToken;
-  token1: RToken;
-  type: PoolType;
-  reserve0: BigNumber;
-  reserve1: BigNumber;
-  fee: number;
-  minLiquidity: number;
-  swapGasCost: number;
+  readonly address: string;
+  readonly token0: RToken;
+  readonly token1: RToken;
+  readonly type: PoolType;
+  readonly reserve0: BigNumber;
+  readonly reserve1: BigNumber;
+  readonly fee: number;
+  readonly minLiquidity: number;
+  readonly swapGasCost: number;
 }
 
 type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
@@ -29,15 +29,15 @@ type PartialBy<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
 type PoolInfoWithDefaults = PartialBy<PoolInfo, 'minLiquidity' | 'swapGasCost'>;
 
 export class Pool {
-  address: string;
-  token0: RToken;
-  token1: RToken;
-  type: PoolType;
-  reserve0: BigNumber;
-  reserve1: BigNumber;
-  fee: number;
-  minLiquidity: number;
-  swapGasCost: number;
+  readonly address: string;
+  readonly token0: RToken;
+  readonly token1: RToken;
+  readonly type: PoolType;
+  readonly reserve0: BigNumber;
+  readonly reserve1: BigNumber;
+  readonly fee: number;
+  readonly minLiquidity: number;
+  readonly swapGasCost: number;
 
   constructor(_info: PoolInfoWithDefaults) {
     const info = {
@@ -68,10 +68,10 @@ export class RConstantProductPool extends Pool {
   }
 }
 
-type HybridPoolInfo = PoolInfoNoType & { A: number };
+type HybridPoolInfo = PoolInfoNoType & { readonly A: number };
 
 export class RHybridPool extends Pool {
-  A: number;
+  readonly A: number;
   constructor(info: HybridPoolInfo) {
     super({
       type: PoolType.Hybrid,
@@ -81,11 +81,11 @@ export class RHybridPool extends Pool {
   }
 }
 
-type WeightedPoolInfo = PoolInfoNoType & { weight0: number; weight1: number };
+type WeightedPoolInfo = PoolInfoNoType & { readonly weight0: number; readonly weight1: number };
 
 export class RWeightedPool extends Pool {
-  weight0: number;
-  weight1: number;
+  readonly weight0: number;
+  readonly weight1: number;
   constructor(info: WeightedPoolInfo) {
     super({
       type: PoolType.Weighted,
@@ -97,24 +97,24 @@ export class RWeightedPool extends Pool {
 }
 
 interface CLTick {
-  index: number;
-  DLiquidity: number;
+  readonly index: number;
+  readonly DLiquidity: number;
 }
 
 interface CLSpecific {
-  liquidity: number;
-  sqrtPrice: number;
-  nearestTick: number;
-  ticks: CLTick[];
+  readonly liquidity: number;
+  readonly sqrtPrice: number;
+  readonly nearestTick: number;
+  readonly ticks: readonly CLTick[];
 }
 
 type CLPoolInfo = Omit<PoolInfoNoType, 'reserve0' | 'reserve1'> & CLSpecific;
 
 export class RConcentratedLiquidityPool extends Pool {
-  liquidity: number;
-  sqrtPrice: number;
-  nearestTick: number;
-  ticks: CLTick[];
+  readonly liquidity: number;
+  readonly sqrtPrice: number;
+  readonly nearestTick: number;
+  readonly ticks: readonly CLTick[];
   constructor(info: CLPoolInfo) {
     super({
       type: PoolType.ConcentratedLiquidity,

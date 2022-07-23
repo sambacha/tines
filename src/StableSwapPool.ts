@@ -4,8 +4,8 @@ import type { RToken } from './PrimaryPools';
 import { getBigNumber } from './Utils';
 
 interface Rebase {
-  elastic: BigNumber;
-  base: BigNumber;
+  readonly elastic: BigNumber;
+  readonly base: BigNumber;
 }
 
 function toAmountBN(share: BigNumber, total: Rebase) {
@@ -14,8 +14,8 @@ function toAmountBN(share: BigNumber, total: Rebase) {
 }
 
 class RebaseInternal {
-  elastic2Base: number;
-  rebaseBN: Rebase;
+  readonly elastic2Base: number;
+  readonly rebaseBN: Rebase;
 
   constructor(rebase: Rebase) {
     this.rebaseBN = rebase;
@@ -38,9 +38,9 @@ class RebaseInternal {
 
 // xy(xx+yy) = k
 export class StableSwapRPool extends RPool {
-  k: BigNumber; // set it to 0 if reserves are changed !!
-  total0: RebaseInternal;
-  total1: RebaseInternal;
+  readonly k: BigNumber; // set it to 0 if reserves are changed !!
+  readonly total0: RebaseInternal;
+  readonly total1: RebaseInternal;
 
   constructor(
     address: string,
@@ -90,7 +90,7 @@ export class StableSwapRPool extends RPool {
     return y;
   }
 
-  calcOutByIn(amountIn: number, direction: boolean): { out: number; gasSpent: number } {
+  calcOutByIn(amountIn: number, direction: boolean): { readonly out: number; readonly gasSpent: number } {
     amountIn = direction ? this.total0.toAmount(amountIn) : this.total1.toAmount(amountIn);
     const x = direction ? this.reserve0 : this.reserve1;
     const y = direction ? this.reserve1 : this.reserve0;
@@ -102,11 +102,11 @@ export class StableSwapRPool extends RPool {
     return { out, gasSpent: this.swapGasCost };
   }
 
-  calcInByOut(amountOut: number, direction: boolean): { inp: number; gasSpent: number } {
+  calcInByOut(amountOut: number, direction: boolean): { readonly inp: number; readonly gasSpent: number } {
     amountOut = direction ? this.total0.toAmount(amountOut) : this.total1.toAmount(amountOut);
     const x = direction ? this.reserve0 : this.reserve1;
     const y = direction ? this.reserve1 : this.reserve0;
-    let yNew = y.sub(getBigNumber(Math.ceil(amountOut)));
+    const yNew = y.sub(getBigNumber(Math.ceil(amountOut)));
     if (yNew.lt(this.minLiquidity))
       // not possible swap
       return { inp: Number.POSITIVE_INFINITY, gasSpent: this.swapGasCost };

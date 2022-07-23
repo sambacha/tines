@@ -2,22 +2,22 @@ import { ASSERT, calcSquareEquation, ConstantProductRPool, getBigNumber, RPool }
 import type { RToken } from './PrimaryPools';
 
 interface JumpInfo {
-  poolIndex: number;
-  input: number;
-  output: number;
-  price: number;
-  combinedLiquidityY: number;
-  gasCost: number;
+  readonly poolIndex: number;
+  readonly input: number;
+  readonly output: number;
+  readonly price: number;
+  readonly combinedLiquidityY: number;
+  readonly gasCost: number;
 }
 
 export class ParallelCPRPool extends RPool {
   declare readonly token0: RToken;
-  readonly allPools: ConstantProductRPool[];
+  readonly allPools: readonly ConstantProductRPool[];
   readonly gasPrice: number;
-  jumps0?: JumpInfo[];
-  jumps1?: JumpInfo[];
+  readonly jumps0?: readonly JumpInfo[];
+  readonly jumps1?: readonly JumpInfo[];
 
-  constructor(inputToken: RToken, pools: ConstantProductRPool[], gasPrice: number) {
+  constructor(inputToken: RToken, pools: readonly ConstantProductRPool[], gasPrice: number) {
     super(
       'ParallelCPRPool',
       pools[0].token0,
@@ -90,7 +90,7 @@ export class ParallelCPRPool extends RPool {
   }
 
   calcBestJump(
-    pools: ConstantProductRPool[],
+    pools: readonly ConstantProductRPool[],
     direction: boolean,
     prevJump?: JumpInfo,
   ): JumpInfo | undefined {
@@ -106,7 +106,7 @@ export class ParallelCPRPool extends RPool {
     return bestJump;
   }
 
-  calcJumps(direction: boolean): JumpInfo[] {
+  calcJumps(direction: boolean): readonly JumpInfo[] {
     let jumps = direction ? this.jumps0 : this.jumps1;
     if (jumps !== undefined) return jumps;
 
@@ -137,7 +137,7 @@ export class ParallelCPRPool extends RPool {
     return less(jumps[b]) ? jumps[b] : jumps[a];
   }
 
-  calcOutByIn(amountIn: number, direction: boolean): { out: number; gasSpent: number } {
+  calcOutByIn(amountIn: number, direction: boolean): { readonly out: number; readonly gasSpent: number } {
     const jump = this.getJump(direction, (j) => j.input <= amountIn);
     console.assert(amountIn >= jump.input);
 
@@ -147,7 +147,7 @@ export class ParallelCPRPool extends RPool {
     return { out: jump.output + addOutput, gasSpent: jump.gasCost };
   }
 
-  calcInByOut(amountOut: number, direction: boolean): { inp: number; gasSpent: number } {
+  calcInByOut(amountOut: number, direction: boolean): { readonly inp: number; readonly gasSpent: number } {
     const jump = this.getJump(direction, (j) => j.output <= amountOut);
     console.assert(amountOut >= jump.input);
 

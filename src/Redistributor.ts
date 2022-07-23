@@ -8,10 +8,10 @@ import { Vertice, Edge } from './Graph';
 
 // Simplified abstraction of pool - all that Redistributor needed and nothing more
 class Pool {
-  from: number;
-  to: number;
-  edge: Edge;
-  direction: boolean;
+  readonly from: number;
+  readonly to: number;
+  readonly edge: Edge;
+  readonly direction: boolean;
 
   constructor(fromIndex: number, toIndex: number, edge: Edge, from: Vertice) {
     this.from = fromIndex;
@@ -30,33 +30,33 @@ class Pool {
 }
 
 export class Redistributor {
-  tokenNumber: number; // Number of tokens
-  tokensTopologySorted: Vertice[]; // List of all tokens, from input token to output
-  tokenIndex: Map<Vertice, number>; // Index of a token in tokensTopologySorted
-  outputTokens: number[][]; // tokenIndex => tokenIndex[] - all output tokens for a given token
-  pools: Pool[][]; // [tokenIndexFrom, tokenIndexTo] => Pool[] - list of all pools between a given
+  readonly tokenNumber: number; // Number of tokens
+  readonly tokensTopologySorted: readonly Vertice[]; // List of all tokens, from input token to output
+  readonly tokenIndex: ReadonlyMap<Vertice, number>; // Index of a token in tokensTopologySorted
+  readonly outputTokens: readonly (readonly number[])[]; // tokenIndex => tokenIndex[] - all output tokens for a given token
+  readonly pools: readonly (readonly Pool[])[]; // [tokenIndexFrom, tokenIndexTo] => Pool[] - list of all pools between a given
   // pair of tokens. Please use getPools/setPools functions only to access this field
-  paths: Pool[][]; // [tokenIndexFrom, tokenIndexTo] => Pool[] - list of all pools that could be
+  readonly paths: readonly (readonly Pool[])[]; // [tokenIndexFrom, tokenIndexTo] => Pool[] - list of all pools that could be
   // start of the path from tokenIndexFrom to tokenIndexTo (any tokens, maybe not connected
   // by a pool). Please use getPaths/setPaths functions only to access this field
 
-  getPaths(from: number, to: number): Pool[] | undefined {
+  getPaths(from: number, to: number): readonly Pool[] | undefined {
     return this.paths[from * this.tokenNumber + to];
   }
 
-  setPaths(from: number, to: number, paths: Pool[]) {
+  setPaths(from: number, to: number, paths: readonly Pool[]) {
     this.paths[from * this.tokenNumber + to] = paths;
   }
 
-  getPools(from: number, to: number): Pool[] | undefined {
+  getPools(from: number, to: number): readonly Pool[] | undefined {
     return this.pools[from * this.tokenNumber + to];
   }
 
-  setPools(from: number, to: number, pools: Pool[]) {
+  setPools(from: number, to: number, pools: readonly Pool[]) {
     this.pools[from * this.tokenNumber + to] = pools;
   }
 
-  constructor(_nodesTopologySorted: Vertice[]) {
+  constructor(_nodesTopologySorted: readonly Vertice[]) {
     this.tokenNumber = _nodesTopologySorted.length;
     this.tokensTopologySorted = _nodesTopologySorted;
 
@@ -109,7 +109,7 @@ export class Redistributor {
     }
   }
 
-  redistrPaths(from: number, to: number, paths: Pool[]) {
+  redistrPaths(from: number, to: number, paths: readonly Pool[]) {
     // TODO: this code was taken from investigation part, should be rearranged for current environment
     /*if (amountIn == 0) {
       return [0, 0, [1]];
@@ -145,7 +145,7 @@ export class Redistributor {
     return [out, gas, distr];*/
   }
 
-  calcOutput(from: number, to: number, paths: Pool[], amountIn: number): number {
+  calcOutput(from: number, to: number, paths: readonly Pool[], amountIn: number): number {
     if (from == to) return amountIn;
     if (paths.length == 1) {
       const amountOut = paths[0].calcOutByIn(amountIn);
@@ -168,7 +168,7 @@ export class Redistributor {
     }
   }
 
-  calcPrice(from: number, to: number, paths: Pool[], amountIn: number): number {
+  calcPrice(from: number, to: number, paths: readonly Pool[], amountIn: number): number {
     const out1 = this.calcOutput(from, to, paths, amountIn);
     const out2 = this.calcOutput(from, to, paths, amountIn * 1.001);
     return ((out2 - out1) * 1000) / amountIn;
@@ -177,7 +177,7 @@ export class Redistributor {
   calcInputForPrice(
     from: number,
     to: number,
-    paths: Pool[],
+    paths: readonly Pool[],
     amountIn: number,
     price: number,
   ): number {
