@@ -41,10 +41,10 @@ export function findMultiRouteExactIn(
   from: RToken,
   to: RToken,
   amountIn: BigNumber | number,
-  pools: RPool[],
+  pools: readonly RPool[],
   baseToken: RToken,
   gasPrice: number,
-  flows?: number | number[],
+  flows?: number | readonly number[],
 ): MultiRoute {
   if (amountIn instanceof BigNumber) {
     amountIn = parseInt(amountIn.toString());
@@ -101,10 +101,10 @@ export function findMultiRouteExactOut(
   from: RToken,
   to: RToken,
   amountOut: BigNumber | number,
-  pools: RPool[],
+  pools: readonly RPool[],
   baseToken: RToken,
   gasPrice: number,
-  flows?: number | number[],
+  flows?: number | readonly number[],
 ): MultiRoute {
   if (amountOut instanceof BigNumber) {
     amountOut = parseInt(amountOut.toString());
@@ -143,7 +143,7 @@ export function findSingleRouteExactIn(
   from: RToken,
   to: RToken,
   amountIn: BigNumber | number,
-  pools: RPool[],
+  pools: readonly RPool[],
   baseToken: RToken,
   gasPrice: number,
 ): MultiRoute {
@@ -174,7 +174,7 @@ export function findSingleRouteExactOut(
   from: RToken,
   to: RToken,
   amountOut: BigNumber | number,
-  pools: RPool[],
+  pools: readonly RPool[],
   baseToken: RToken,
   gasPrice: number,
 ): MultiRoute {
@@ -191,13 +191,8 @@ export function findSingleRouteExactOut(
   const out = g.findBestRouteExactOut(from, to, amountOut, 1)
   return out
 }
-/**
- * @export calcTokenPrices
- * @param {RPool[]} pools
- * @param {RToken} baseToken
- * @returns {*}  {Map<RToken, number>}
- */
-export function calcTokenPrices(pools: RPool[], baseToken: RToken): Map<RToken, number> {
+
+export function calcTokenPrices(pools: readonly RPool[], baseToken: RToken): ReadonlyMap<RToken, number> {
   const g = new Graph(pools, baseToken, 0);
   const res = new Map<RToken, number>();
   g.vertices.forEach((v) => res.set(v.token, v.price));

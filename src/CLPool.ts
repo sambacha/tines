@@ -6,16 +6,16 @@ export const CL_MIN_TICK = -887_272;
 export const CL_MAX_TICK = -CL_MIN_TICK - 1;
 
 export interface CLTick {
-  index: number;
-  DLiquidity: number;
+  readonly index: number;
+  readonly DLiquidity: number;
 }
 
 export class CLRPool extends RPool {
-  tickSpacing: number;
-  liquidity: number;
-  sqrtPrice: number;
-  nearestTick: number;
-  ticks: CLTick[];
+  readonly tickSpacing: number;
+  readonly liquidity: number;
+  readonly sqrtPrice: number;
+  readonly nearestTick: number;
+  readonly ticks: readonly CLTick[];
 
   constructor(
     address: string,
@@ -28,7 +28,7 @@ export class CLRPool extends RPool {
     liquidity: number,
     sqrtPrice: number,
     nearestTick: number,
-    ticks: CLTick[],
+    ticks: readonly CLTick[],
   ) {
     super(
       address,
@@ -55,7 +55,7 @@ export class CLRPool extends RPool {
       this.ticks.push({ index: CL_MAX_TICK, DLiquidity: 0 });
   }
 
-  calcOutByIn(amountIn: number, direction: boolean): { out: number; gasSpent: number } {
+  calcOutByIn(amountIn: number, direction: boolean): { readonly out: number; readonly gasSpent: number } {
     let nextTickToCross = direction ? this.nearestTick : this.nearestTick + 1;
     let currentPrice = this.sqrtPrice;
     let currentLiquidity = this.liquidity;
@@ -118,7 +118,7 @@ export class CLRPool extends RPool {
     return { out: outAmount, gasSpent: this.swapGasCost }; // TODO: more accurate gas prediction
   }
 
-  calcInByOut(amountOut: number, direction: boolean): { inp: number; gasSpent: number } {
+  calcInByOut(amountOut: number, direction: boolean): { readonly inp: number; readonly gasSpent: number } {
     let nextTickToCross = direction ? this.nearestTick : this.nearestTick + 1;
     let currentPrice = this.sqrtPrice;
     let currentLiquidity = this.liquidity;

@@ -1,7 +1,7 @@
 import { Observable } from 'rxjs';
 //const debug = require("debug")("tines")
 
-export let patches = {
+export const patches = {
   subscriptions: 0,
 };
 

@@ -54,7 +54,7 @@ export function closeValues(a: number, b: number, accuracy: number): boolean {
  * @param {number} c
  * @return {*}  {[number, number]}
  */
-export function calcSquareEquation(a: number, b: number, c: number): [number, number] {
+export function calcSquareEquation(a: number, b: number, c: number): readonly [number, number] {
   const D = b * b - 4 * a * c;
   console.assert(D >= 0, `Discriminant is negative! ${a} ${b} ${c}`);
   const sqrtD = Math.sqrt(D);
