@@ -68,22 +68,38 @@ export function calcSquareEquation(a: number, b: number, c: number): [number, nu
  * @param {number} [hint=1]
  * @return {*}
  * @summary Returns such x > 0 that f(x) = out or 0 if there is no such x or f defined not everywhere
- * @hint  approximation of x to spead up the algorithm
+ * @hint  approximation of x to speed up the algorithm
  * @note f assumed to be continues monotone growth function defined everywhere
  */
-export function revertPositive(f: (x: number) => number, out: number, hint = 1) {
-  try {
-    if (out <= f(0)) return 0;
-    let min: number;
-    let max: number;
-    if (f(hint) > out) {
-      min = hint / 2;
-      while (f(min) > out) min /= 2;
-      max = min * 2;
-    } else {
-      max = hint * 2;
-      while (f(max) < out) max *= 2;
-      min = max / 2;
+export function revertPositive(
+    f: (x: number) => number,
+    out: number,
+    hint: number = 1
+  ): any {
+    try {
+      if (out <= f(0)) return 0;
+      let min: number;
+      let max: number;
+      if (f(hint) > out) {
+        min = hint / 2;
+        while (f(min) > out) min /= 2;
+        max = min * 2;
+      } else {
+        max = hint * 2;
+        while (f(max) < out) max *= 2;
+        min = max / 2;
+      }
+  
+      while (max / min - 1 > 1e-4) {
+        const x0: number = (min + max) / 2;
+        const y0 = f(x0);
+        if (out === y0) return x0;
+        if (out < y0) max = x0;
+        else min = x0;
+      }
+      return (min + max) / 2;
+    } catch (e) {
+      return 0;
     }
 
     while (max / min - 1 > 1e-4) {
