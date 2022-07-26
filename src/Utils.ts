@@ -60,14 +60,14 @@ export function enableTraceMode() {
  * @param {number} [hint=1]
  * @return {*} 
  * @summary Returns such x > 0 that f(x) = out or 0 if there is no such x or f defined not everywhere
- * @hint  approximation of x to spead up the algorithm
+ * @hint  approximation of x to speed up the algorithm
  * @note f assumed to be continues monotone growth function defined everywhere
  */
 export function revertPositive(
     f: (x: number) => number,
     out: number,
-    hint = 1
-  ) {
+    hint: number = 1
+  ): any {
     try {
       if (out <= f(0)) return 0;
       let min: number;

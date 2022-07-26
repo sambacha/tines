@@ -5,21 +5,20 @@ import { RPool } from "./PrimaryPools";
 import type { RToken } from "./PrimaryPools";
 
 // Assumes route is a single path
-function calcPriceImactWithoutFee(route: MultiRoute) {
+function calcPriceImpactWithoutFee(route: MultiRoute) {
   if (route.primaryPrice === undefined || route.swapPrice === undefined) {
     return undefined
-  } else {
-    let oneMinusCombinedFee = 1
-    route.legs.forEach(l => oneMinusCombinedFee *= (1-l.poolFee))
-    //const combinedFee = 1-oneMinusCombinedFee
-    return Math.max(0, 1-route.swapPrice/route.primaryPrice/oneMinusCombinedFee)
   }
+  let oneMinusCombinedFee = 1
+  route.legs.forEach(l => oneMinusCombinedFee *= (1-l.poolFee))
+  //const combinedFee = 1-oneMinusCombinedFee
+  return Math.max(0, 1-route.swapPrice/route.primaryPrice/oneMinusCombinedFee)
 }
 
 const defaultFlowNumber = 12
 const maxFlowNumber = 100
 function calcBestFlowNumber(bestSingleRoute: MultiRoute, amountIn: number, gasPriceIn?: number): number {
-  const priceImpact = calcPriceImactWithoutFee(bestSingleRoute)
+  const priceImpact = calcPriceImpactWithoutFee(bestSingleRoute)
   if (!priceImpact) return defaultFlowNumber
 
   const bestFlowAmount = Math.sqrt(bestSingleRoute.gasSpent*(gasPriceIn || 0)*amountIn/priceImpact)
@@ -70,8 +69,14 @@ export function findMultiRouteExactIn(
   const outMulti = g.findBestRouteExactIn(from, to, amountIn, bestFlowNumber)
   return getBetterRouteExactIn(outSingle, outMulti)
 }
-
-function getBetterRouteExactOut(route1: MultiRoute, route2: MultiRoute, gasPrice: number): MultiRoute {
+/**
+ * @export getBetterRouteExactOut
+ * @param {MultiRoute} route1
+ * @param {MultiRoute} route2
+ * @param {number} gasPrice
+ * @returns {*}  {MultiRoute}
+ */
+export function getBetterRouteExactOut(route1: MultiRoute, route2: MultiRoute, gasPrice: number): MultiRoute {
   if (route1.status == RouteStatus.NoWay) return route2
   if (route2.status == RouteStatus.NoWay) return route1
   if (route1.status == RouteStatus.Partial && route2.status == RouteStatus.Success) return route2
@@ -81,6 +86,17 @@ function getBetterRouteExactOut(route1: MultiRoute, route2: MultiRoute, gasPrice
   return totalAmountIn1 < totalAmountIn2 ? route1 : route2
 }
 
+/**
+ * @export findMultiRouteExactOut
+ * @param {RToken} from
+ * @param {RToken} to
+ * @param {(BigNumber | number)} amountOut
+ * @param {RPool[]} pools
+ * @param {RToken} baseToken
+ * @param {number} gasPrice
+ * @param {(number | number[])} [flows]
+ * @returns {*}  {MultiRoute}
+ */
 export function findMultiRouteExactOut(
   from: RToken,
   to: RToken,
@@ -113,7 +129,16 @@ export function findMultiRouteExactOut(
   const inMulti = g.findBestRouteExactOut(from, to, amountOut, bestFlowNumber)
   return getBetterRouteExactOut(inSingle, inMulti, gasPrice)
 }
-
+/**
+ * @export findSingleRouteExactIn
+ * @param {RToken} from
+ * @param {RToken} to
+ * @param {(BigNumber | number)} amountIn
+ * @param {RPool[]} pools
+ * @param {RToken} baseToken
+ * @param {number} gasPrice
+ * @returns {*}  {MultiRoute}
+ */
 export function findSingleRouteExactIn(
   from: RToken,
   to: RToken,
@@ -135,7 +160,16 @@ export function findSingleRouteExactIn(
   const out = g.findBestRouteExactIn(from, to, amountIn, 1)
   return out
 }
-
+/**
+ * @export findSingleRouteExactOut
+ * @param {RToken} from
+ * @param {RToken} to
+ * @param {(BigNumber | number)} amountOut
+ * @param {RPool[]} pools
+ * @param {RToken} baseToken
+ * @param {number} gasPrice
+ * @returns {*}  {MultiRoute}
+ */
 export function findSingleRouteExactOut(
   from: RToken,
   to: RToken,
@@ -153,11 +187,16 @@ export function findSingleRouteExactOut(
   if (amountOut instanceof BigNumber) {
     amountOut = parseInt(amountOut.toString())
   }
-
+// return g.findBestRouteExactOut(from, to, amountOut, 1)
   const out = g.findBestRouteExactOut(from, to, amountOut, 1)
   return out
 }
-
+/**
+ * @export calcTokenPrices
+ * @param {RPool[]} pools
+ * @param {RToken} baseToken
+ * @returns {*}  {Map<RToken, number>}
+ */
 export function calcTokenPrices(pools: RPool[], baseToken: RToken): Map<RToken, number> {
   const g = new Graph(pools, baseToken, 0)
   const res = new Map<RToken, number>()
