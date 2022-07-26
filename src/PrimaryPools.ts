@@ -3,12 +3,21 @@ import { getBigNumber, revertPositive } from './Utils';
 
 export const TYPICAL_SWAP_GAS_COST = 60_000;
 export const TYPICAL_MINIMAL_LIQUIDITY = 1_000;
-
+/**
+ * 
+ * @export
+ * @interface RToken
+ */
 export interface RToken {
   readonly name: string;
   readonly address: string;
 }
-
+/**
+ * 
+ * @export
+ * @abstract
+ * @class RPool
+ */
 export abstract class RPool {
   readonly address: string;
   readonly token0: RToken;
