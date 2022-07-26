@@ -1,8 +1,8 @@
-import { BigNumber } from "@ethersproject/bignumber";
-import { Graph, RouteStatus } from "./Graph";
-import type { MultiRoute } from "./Graph";
-import { RPool } from "./PrimaryPools";  
-import type { RToken } from "./PrimaryPools";
+import { BigNumber } from '@ethersproject/bignumber';
+import { Graph, RouteStatus } from './Graph';
+import type { MultiRoute } from './Graph';
+import { RPool } from './PrimaryPools';
+import type { RToken } from './PrimaryPools';
 
 // Assumes route is a single path
 function calcPriceImpactWithoutFee(route: MultiRoute) {
@@ -30,11 +30,11 @@ function calcBestFlowNumber(bestSingleRoute: MultiRoute, amountIn: number, gasPr
 }
 
 function getBetterRouteExactIn(route1: MultiRoute, route2: MultiRoute): MultiRoute {
-  if (route1.status == RouteStatus.NoWay) return route2
-  if (route2.status == RouteStatus.NoWay) return route1
-  if (route1.status == RouteStatus.Partial && route2.status == RouteStatus.Success) return route2
-  if (route2.status == RouteStatus.Partial && route1.status == RouteStatus.Success) return route1
-  return route1.totalAmountOut > route2.totalAmountOut ? route1 : route2
+  if (route1.status == RouteStatus.NoWay) return route2;
+  if (route2.status == RouteStatus.NoWay) return route1;
+  if (route1.status == RouteStatus.Partial && route2.status == RouteStatus.Success) return route2;
+  if (route2.status == RouteStatus.Partial && route1.status == RouteStatus.Success) return route1;
+  return route1.totalAmountOut > route2.totalAmountOut ? route1 : route2;
 }
 
 export function findMultiRouteExactIn(
@@ -44,30 +44,30 @@ export function findMultiRouteExactIn(
   pools: RPool[],
   baseToken: RToken,
   gasPrice: number,
-  flows?: number | number[]
+  flows?: number | number[],
 ): MultiRoute {
   if (amountIn instanceof BigNumber) {
-    amountIn = parseInt(amountIn.toString())
+    amountIn = parseInt(amountIn.toString());
   }
 
-  const g = new Graph(pools, baseToken, gasPrice)
-  const fromV = g.tokens.get(from.address)
+  const g = new Graph(pools, baseToken, gasPrice);
+  const fromV = g.tokens.get(from.address);
   if (fromV?.price === 0) {
-    g.setPricesStable(fromV, 1, 0)
+    g.setPricesStable(fromV, 1, 0);
   }
 
-  if (flows !== undefined) return g.findBestRouteExactIn(from, to, amountIn, flows)
+  if (flows !== undefined) return g.findBestRouteExactIn(from, to, amountIn, flows);
 
-  const outSingle = g.findBestRouteExactIn(from, to, amountIn, 1)
+  const outSingle = g.findBestRouteExactIn(from, to, amountIn, 1);
   // Possible optimization of timing
   // if (g.findBestPathExactIn(from, to, amountIn/100 + 10_000, 0)?.gasSpent === 0) return outSingle
-  g.cleanTmpData()
+  g.cleanTmpData();
 
-  const bestFlowNumber = calcBestFlowNumber(outSingle, amountIn, fromV?.gasPrice)
-  if (bestFlowNumber === 1) return outSingle
+  const bestFlowNumber = calcBestFlowNumber(outSingle, amountIn, fromV?.gasPrice);
+  if (bestFlowNumber === 1) return outSingle;
 
-  const outMulti = g.findBestRouteExactIn(from, to, amountIn, bestFlowNumber)
-  return getBetterRouteExactIn(outSingle, outMulti)
+  const outMulti = g.findBestRouteExactIn(from, to, amountIn, bestFlowNumber);
+  return getBetterRouteExactIn(outSingle, outMulti);
 }
 /**
  * @export getBetterRouteExactOut
@@ -104,30 +104,30 @@ export function findMultiRouteExactOut(
   pools: RPool[],
   baseToken: RToken,
   gasPrice: number,
-  flows?: number | number[]
+  flows?: number | number[],
 ): MultiRoute {
   if (amountOut instanceof BigNumber) {
-    amountOut = parseInt(amountOut.toString())
+    amountOut = parseInt(amountOut.toString());
   }
 
-  const g = new Graph(pools, baseToken, gasPrice)
-  const fromV = g.tokens.get(from.address)
+  const g = new Graph(pools, baseToken, gasPrice);
+  const fromV = g.tokens.get(from.address);
   if (fromV?.price === 0) {
-    g.setPricesStable(fromV, 1, 0)
+    g.setPricesStable(fromV, 1, 0);
   }
 
-  if (flows !== undefined) return g.findBestRouteExactOut(from, to, amountOut, flows)
+  if (flows !== undefined) return g.findBestRouteExactOut(from, to, amountOut, flows);
 
-  const inSingle = g.findBestRouteExactOut(from, to, amountOut, 1)
+  const inSingle = g.findBestRouteExactOut(from, to, amountOut, 1);
   // Possible optimization of timing
   // if (g.findBestPathExactOut(from, to, amountOut/100 + 10_000, 0)?.gasSpent === 0) return inSingle
-  g.cleanTmpData()
+  g.cleanTmpData();
 
-  const bestFlowNumber = calcBestFlowNumber(inSingle, inSingle.amountIn, fromV?.gasPrice)
-  if (bestFlowNumber === 1) return inSingle
+  const bestFlowNumber = calcBestFlowNumber(inSingle, inSingle.amountIn, fromV?.gasPrice);
+  if (bestFlowNumber === 1) return inSingle;
 
-  const inMulti = g.findBestRouteExactOut(from, to, amountOut, bestFlowNumber)
-  return getBetterRouteExactOut(inSingle, inMulti, gasPrice)
+  const inMulti = g.findBestRouteExactOut(from, to, amountOut, bestFlowNumber);
+  return getBetterRouteExactOut(inSingle, inMulti, gasPrice);
 }
 /**
  * @export findSingleRouteExactIn
@@ -145,20 +145,20 @@ export function findSingleRouteExactIn(
   amountIn: BigNumber | number,
   pools: RPool[],
   baseToken: RToken,
-  gasPrice: number
+  gasPrice: number,
 ): MultiRoute {
-  const g = new Graph(pools, baseToken, gasPrice)
-  const fromV = g.tokens.get(from.address)
+  const g = new Graph(pools, baseToken, gasPrice);
+  const fromV = g.tokens.get(from.address);
   if (fromV?.price === 0) {
-    g.setPricesStable(fromV, 1, 0)
+    g.setPricesStable(fromV, 1, 0);
   }
 
   if (amountIn instanceof BigNumber) {
-    amountIn = parseInt(amountIn.toString())
+    amountIn = parseInt(amountIn.toString());
   }
 
-  const out = g.findBestRouteExactIn(from, to, amountIn, 1)
-  return out
+  const out = g.findBestRouteExactIn(from, to, amountIn, 1);
+  return out;
 }
 /**
  * @export findSingleRouteExactOut
@@ -176,16 +176,16 @@ export function findSingleRouteExactOut(
   amountOut: BigNumber | number,
   pools: RPool[],
   baseToken: RToken,
-  gasPrice: number
+  gasPrice: number,
 ): MultiRoute {
-  const g = new Graph(pools, baseToken, gasPrice)
-  const fromV = g.tokens.get(from.address)
+  const g = new Graph(pools, baseToken, gasPrice);
+  const fromV = g.tokens.get(from.address);
   if (fromV?.price === 0) {
-    g.setPricesStable(fromV, 1, 0)
+    g.setPricesStable(fromV, 1, 0);
   }
 
   if (amountOut instanceof BigNumber) {
-    amountOut = parseInt(amountOut.toString())
+    amountOut = parseInt(amountOut.toString());
   }
 // return g.findBestRouteExactOut(from, to, amountOut, 1)
   const out = g.findBestRouteExactOut(from, to, amountOut, 1)
@@ -198,8 +198,8 @@ export function findSingleRouteExactOut(
  * @returns {*}  {Map<RToken, number>}
  */
 export function calcTokenPrices(pools: RPool[], baseToken: RToken): Map<RToken, number> {
-  const g = new Graph(pools, baseToken, 0)
-  const res = new Map<RToken, number>()
-  g.vertices.forEach(v => res.set(v.token, v.price))
-  return res
+  const g = new Graph(pools, baseToken, 0);
+  const res = new Map<RToken, number>();
+  g.vertices.forEach((v) => res.set(v.token, v.price));
+  return res;
 }

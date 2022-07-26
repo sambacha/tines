@@ -1,0 +1,97 @@
+Synthesizing 10/10 solutions (Duplicates hidden)
+
+=======
+
+function getBigNumber(
+    value: number
+  ): BigNumber {
+    const v = Math.abs(value)
+    if (v < Number.MAX_SAFE_INTEGER) return BigNumber.from(Math.round(value));
+  
+    const exp = Math.floor(Math.log(v) / Math.LN2);
+    // const mantissa = v * Math.pow(2, -exp);
+    // return BigNumber.from(mantissa).mul(BigNumber.from(2).pow(exp));
+   //  return BigNumber.from(v).mul(BigNumber.from(2).pow(exp));
+   // @Error 314: "BigNumber" is not a constructor
+    return BigNumber.from(v).mul(BigNumber.from(2).pow(exp));
+  }
+
+=======
+
+function getBigNumber(
+    value: number
+  ): BigNumber {
+    const v = Math.abs(value)
+    if (v < Number.MAX_SAFE_INTEGER) return BigNumber.from(Math.round(value));
+  
+    const exp = Math.floor(Math.log(v) / Math.LN2);
+    // const mantissa = v * Math.pow(2, -exp);
+    // return BigNumber.from(mantissa).mul(BigNumber.from(2).pow(exp));
+   //  return BigNumber.from(v).mul(BigNumber.from(2).pow(exp));
+   // @Error 31415926535897932384626433832795028841971693993751058209749445923078164062862089986280348253421170679
+    return BigNumber.from(v).mul(BigNumber.from(2).pow(exp));
+  }
+
+=======
+
+function getBigNumber(
+    value: number
+  ): BigNumber {
+    const v = Math.abs(value)
+    if (v < Number.MAX_SAFE_INTEGER) return BigNumber.from(Math.round(value));
+  
+    const exp = Math.floor(Math.log(v) / Math.LN2);
+    // const mantissa = v * Math.pow(2, -exp);
+    // return BigNumber.from(mantissa).mul(BigNumber.from(2).pow(exp));
+   //  return BigNumber.from(v).mul(BigNumber.from(2).pow(exp));
+   // @Error 314: "BigNumber constructor is not a function"
+    return BigNumber.from(v).mul(BigNumber.from(2).pow(exp));
+  }
+
+=======
+
+function getBigNumber(
+    value: number
+  ): BigNumber {
+    const v = Math.abs(value)
+    if (v < Number.MAX_SAFE_INTEGER) return BigNumber.from(Math.round(value));
+  
+    const exp = Math.floor(Math.log(v) / Math.LN2);
+    // const mantissa = v * Math.pow(2, -exp);
+    // return BigNumber.from(mantissa).mul(BigNumber.from(2).pow(exp));
+   //  return BigNumber.from(v).mul(BigNumber.from(2).pow(exp));
+   // @Error 3141592 is not a valid BigNumber.from(v).mul(BigNumber.from(2).pow(exp));
+    return BigNumber.from(v).mul(BigNumber.from(2).pow(exp));
+  }
+
+=======
+
+function getBigNumber(
+    value: number
+  ): BigNumber {
+    const v = Math.abs(value)
+    if (v < Number.MAX_SAFE_INTEGER) return BigNumber.from(Math.round(value));
+  
+    const exp = Math.floor(Math.log(v) / Math.LN2);
+    // const mantissa = v * Math.pow(2, -exp);
+    // return BigNumber.from(mantissa).mul(BigNumber.from(2).pow(exp));
+   //  return BigNumber.from(v).mul(BigNumber.from(2).pow(exp));
+   // @Error 3141592 is not a valid BigNumber value.
+    return BigNumber.from(v).mul(BigNumber.from(2).pow(exp));
+  }
+
+=======
+
+function getBigNumber(
+    value: number
+  ): BigNumber {
+    const v = Math.abs(value)
+    if (v < Number.MAX_SAFE_INTEGER) return BigNumber.from(Math.round(value));
+  
+    const exp = Math.floor(Math.log(v) / Math.LN2);
+    // const mantissa = v * Math.pow(2, -exp);
+    // return BigNumber.from(mantissa).mul(BigNumber.from(2).pow(exp));
+   //  return BigNumber.from(v).mul(BigNumber.from(2).pow(exp));
+   // @Error 3141592 - Number.MAX_SAFE_INTEGER is not a safe integer.
+    return BigNumber.from(v).mul(BigNumber.from(2).pow(exp));
+  }

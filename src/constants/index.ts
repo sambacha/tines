@@ -1,1 +1,1 @@
-export * from './hybrid'
+export { A_PRECISION } from './hybrid';
