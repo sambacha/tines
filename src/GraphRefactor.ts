@@ -1,4 +1,5 @@
-import { BigNumber } from '@ethersproject/bignumber/lib.esm/index.js';;
+import { BigNumber } from '@ethersproject/bignumber/lib.esm/index.js';
+import type { BigNumberish } from '@ethersproject/bignumber/lib.esm/index.js';
 
 import { RPool } from './PrimaryPools';
 import { ASSERT, closeValues, DEBUG, getBigNumber } from './Utils';
@@ -33,13 +34,13 @@ export interface MultiRoute {
   swapPrice?: number
   priceImpact?: number
   amountIn: number
-  amountInBN: BigNumber
+  amountInBN: BigNumberish
   amountOut: number
-  amountOutBN: BigNumber
+  amountOutBN: BigNumberish
   legs: RouteLeg[]
   gasSpent: number
   totalAmountOut: number
-  totalAmountOutBN: BigNumber
+  totalAmountOutBN: BigNumberish
 }
 
 export class Edge {
@@ -276,8 +277,9 @@ export class Vertice {
   bestIncome: number // temp data used for findBestPath algorithm
   gasSpent: number // temp data used for findBestPath algorithm
   bestTotal: number // temp data used for findBestPath algorithm
-  bestSource?: Edge // temp data used for findBestPath algorithm
-  checkLine: number // debug data
+  bestSource?: Edge | undefined;// temp data used for findBestPath algorithm
+  checkLine: number// debug data
+
 
   constructor(t: RToken) {
     this.token = t
@@ -652,7 +654,7 @@ export class Graph {
       if (closestVert === finish) {
         const bestPath = []
         for (let v: Vertice | undefined = finish; v?.bestSource; v = v.getNeighbor(v.bestSource)) {
-          bestPath.push(v.bestSource)
+          bestPath.push(Vertice.bestSource)
         }
         DEBUG(() => console.log(debug_info))
         return {
@@ -767,7 +769,7 @@ export class Graph {
       amountInBN = getBigNumber(amountIn)
     }
 
-    let routeValues = []
+    let routeValues: any;
     if (Array.isArray(mode)) {
       const sum = mode.reduce((a, b) => a + b, 0)
       routeValues = mode.map((e) => e / sum)
@@ -784,8 +786,8 @@ export class Graph {
     let gasSpentInit = 0
     //let totalOutput = 0
     let totalrouted = 0
-    let primaryPrice
-    let step
+    let primaryPrice: number | undefined;
+    let step: number;
     for (step = 0; step < routeValues.length; ++step) {
       const p = this.findBestPathExactIn(from, to, amountIn * routeValues[step])
       if (!p) {
@@ -858,7 +860,7 @@ export class Graph {
   }
 
   findBestRouteExactOut(from: RToken, to: RToken, amountOut: number, mode: number | number[]): MultiRoute {
-    let routeValues = []
+    let routeValues: any;
     if (Array.isArray(mode)) {
       const sum = mode.reduce((a, b) => a + b, 0)
       routeValues = mode.map((e) => e / sum)
@@ -875,8 +877,8 @@ export class Graph {
     let gasSpentInit = 0
     //let totalOutput = 0
     let totalrouted = 0
-    let primaryPrice
-    let step
+    let primaryPrice: number | undefined
+    let step: number
     for (step = 0; step < routeValues.length; ++step) {
       const p = this.findBestPathExactOut(from, to, amountOut * routeValues[step])
       if (!p) {
@@ -906,10 +908,7 @@ export class Graph {
         totalAmountOut: 0,
         totalAmountOutBN: BigNumber.from(0),
       }
-    let status
-    if (step < routeValues.length) status = RouteStatus.Partial
-    else status = RouteStatus.Success
-
+    let status: RouteStatus = step < routeValues.length ? RouteStatus.Partial : RouteStatus.Success
     const fromVert = this.tokens.get(from.address) as Vertice
     const toVert = this.tokens.get(to.address) as Vertice
     const { legs, gasSpent, topologyWasChanged } = this.getRouteLegs(fromVert, toVert)
@@ -919,7 +918,8 @@ export class Graph {
       input = this.calcLegsAmountIn(legs, amountOut) ///
     }
 
-    let swapPrice, priceImpact
+    let swapPrice: number, 
+    priceImpact: number | undefined
     try {
       swapPrice = amountOut / input
       const priceTo = this.tokens.get(to.address)?.price
@@ -1004,7 +1004,7 @@ export class Graph {
       const vert = this.tokens.get(l.tokenFrom.address)
       console.assert(vert !== undefined, 'Internal Error 570')
       const edge = (vert as Vertice).edges.find((e) => e.pool.address === l.poolAddress)
-      console.assert(edge !== undefined, 'Internel Error 569')
+      console.assert(edge !== undefined, 'Internal Error 569')
       const pool = (edge as Edge).pool
       const direction = vert === (edge as Edge).vert0
 
@@ -1036,7 +1036,7 @@ export class Graph {
       const vert = this.tokens.get(l.tokenTo.address)
       console.assert(vert !== undefined, 'Internal Error 884')
       const edge = (vert as Vertice).edges.find((e) => e.pool.address === l.poolAddress)
-      console.assert(edge !== undefined, 'Internel Error 888')
+      console.assert(edge !== undefined, 'Internal Error 888')
       const pool = (edge as Edge).pool
       const direction = vert === (edge as Edge).vert1
 

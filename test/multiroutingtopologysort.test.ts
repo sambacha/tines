@@ -1,5 +1,5 @@
 import { Edge, Graph, Vertice } from '../src'
-import { BigNumber } from '@ethersproject/bignumber'
+import { BigNumber } from '@ethersproject/bignumber/lib.esm/index.js';
 import seedrandom from 'seedrandom'
 import { ConstantProductRPool, RToken } from '../src/PrimaryPools'
 
@@ -50,11 +50,11 @@ function createCorrectTopology(t: Topology, paths: number): [Graph, Vertice, Ver
 function generatePath(g: Graph, from: Vertice, to: Vertice, used: Set<Vertice>): Edge[] | undefined {
   if (from === to) return []
   used.add(from)
-  const edges = from.edges.filter((e) => !used.has(from.getNeibour(e) as Vertice))
+  const edges = from.edges.filter((e) => !used.has(from.getNeighbor(e) as Vertice))
   while (edges.length) {
     const r = Math.floor(rnd() * from.edges.length)
     const edge = from.edges[r]
-    const p = generatePath(g, from.getNeibour(edge) as Vertice, to, used)
+    const p = generatePath(g, from.getNeighbor(edge) as Vertice, to, used)
     if (p !== undefined) return [edge, ...p]
     edges.splice(r, 1)
   }
@@ -78,7 +78,7 @@ function applyPath(p: Edge[], from: Vertice, to: Vertice) {
     }
     console.assert(e.amountOutPrevious >= 0)
     console.assert(e.amountInPrevious >= 0)
-    v = v.getNeibour(e) as Vertice
+    v = v.getNeighbor(e) as Vertice
   })
   console.assert(v === to)
 }

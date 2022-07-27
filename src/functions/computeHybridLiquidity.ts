@@ -1,4 +1,4 @@
-import { BigNumber } from '@ethersproject/bignumber'
+import { BigNumber, type BigNumberish } from '@ethersproject/bignumber/lib.esm/index.js';
 
 import { A_PRECISION } from '../constants'
 
@@ -11,7 +11,7 @@ export function computeHybridLiquidity(r0: BigNumber, r1: BigNumber, a: number):
 
   const nA = BigNumber.from(a * 2)
 
-  let prevD
+  let prevD: BigNumberish
 
   let D = s
   for (let i = 0; i < 256; i++) {

@@ -1,7 +1,8 @@
-import { BigNumber } from '@ethersproject/bignumber'
+import { BigNumber } from '@ethersproject/bignumber/lib.esm/index.js';
 
-import { RPool, RToken } from './PrimaryPools'
+import { RPool } from './PrimaryPools'
 import { getBigNumber } from './Utils'
+import type { RToken } from './PrimaryPools';
 
 export interface Rebase {
   elastic: BigNumber

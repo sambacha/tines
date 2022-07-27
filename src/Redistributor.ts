@@ -1,7 +1,7 @@
 /// TODO:
 // 1) Taking into account several parallel pools was not finished
 // 2) Is it possible to redistribute intersected paths, or should they be reduced till not-intersected paths only?
-// 3) Can we find optimal destribution between all output pools of a token, or only between those paths which end in the same token?
+// 3) Can we find optimal distribution between all output pools of a token, or only between those paths which end in the same token?
 //    If only second - then in what sequence this optimization should be? From closer tokens to more far?
 import { Edge, Vertice } from './Graph'
 import { revertPositive } from './Utils'
@@ -67,7 +67,7 @@ export class Redistributor {
     this.pools = new Array(this.tokenNumber * this.tokenNumber) // TODO: test with []
     _nodesTopologySorted.forEach((n, i) => {
       const edges = n.getOutputEdges()
-      const nodes = edges.map((e) => this.tokenIndex.get(n.getNeibour(e) as Vertice) as number)
+      const nodes = edges.map((e) => this.tokenIndex.get(n.getNeighbor(e) as Vertice) as number)
       this.outputTokens[i] = [...new Set(nodes)]
       for (let j = 0; j < nodes.length; ++j) {
         const pools = this.getPools(i, j) || []

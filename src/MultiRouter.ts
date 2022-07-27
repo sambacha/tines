@@ -1,7 +1,8 @@
-import { BigNumber } from '@ethersproject/bignumber'
+import { BigNumber } from '@ethersproject/bignumber/lib.esm/index.js';
 
 import { Graph, MultiRoute, RouteStatus } from './Graph'
-import { RPool, RToken } from './PrimaryPools'
+import { RPool } from './PrimaryPools'
+import type { RToken } from './PrimaryPools';
 
 // Assumes route is a single path
 function calcPriceImactWithoutFee(route: MultiRoute) {
