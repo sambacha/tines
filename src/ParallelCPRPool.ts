@@ -11,7 +11,7 @@ interface JumpInfo {
 }
 
 export class ParallelCPRPool extends RPool {
-  readonly token0: RToken
+  declare readonly token0: RToken
   readonly allPools: ConstantProductRPool[]
   readonly gasPrice: number
   jumps0?: JumpInfo[]
