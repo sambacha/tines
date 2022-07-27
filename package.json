@@ -1,7 +1,8 @@
 {
-  "name": "@sushiswap/tines",
+  "name": "tines-dev",
+  "private": true,
   "version": "1.0.0-canary.98",
-  "license": "MIT",
+  "license": "SEE LICENSE IN LICENSE",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
   "files": [
@@ -33,7 +34,7 @@
     "fmt": "npx prettier --config .prettierrc.js --write src/**/*.ts"
   },
   "dependencies": {
-    "@ethersproject/bignumber": "^5.4.0",
+    "@ethersproject/bignumber": "^5.6.2",
     "@sushiswap/core-sdk": "1.0.0-canary.116",
     "debug": "^4.3.4"
   },
